@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useGlobal } from "reactn";
 import axios from "axios";
 import FBox from 'fbox'
 import { Form, Input, Button, Checkbox } from 'antd'
@@ -54,6 +54,7 @@ const tailLayout = {
 function Login(props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [globalUser, setGlobalUser] = useGlobal('user')
 
   const username = useFormInput("");
   const password = useFormInput("");
@@ -88,8 +89,10 @@ function Login(props) {
         password: values.password
       })
       .then(response => {
+        const {token, user} = response.data;
         setLoading(false);
-        setUserSession(response.data.token, response.data.user);
+        setUserSession(token, user);
+        setGlobalUser(user);
         props.history.push("/dashboard");
       })
       .catch(error => {
